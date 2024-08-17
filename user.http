@@ -1,0 +1,70 @@
+// Inserir usuário novo
+POST http://localhost:8080/user 
+Content-Type: application/json
+
+{
+    "nome": "David",
+    "login": "david",
+    "senha": "1234567",
+    "email": "davi@gmail.com"
+}
+
+// Utiliza-se obrigatoriamente: ###, para separar uma requisção da outra. 
+###
+
+// Mostrar todos os usuários
+GET http://localhost:8080/user/list
+
+###
+
+// Mostrar um usuário por ID
+GET http://localhost:8080/user/6
+
+###
+
+// Alterar um usuário
+PUT http://localhost:8080/user 
+Content-Type: application/json
+
+{
+    "nome": "Administador",
+    "login": "admin",
+    "senha": "12312",
+    "email": "admin@gmail.com"
+}
+
+###
+
+// Buscar por nome
+GET http://localhost:8080/user/nome/min
+
+###
+
+// Buscar por login
+GET http://localhost:8080/user/login/david
+
+###
+
+// Inserir uma requisicao nova
+POST http://localhost:8080/request 
+Content-Type: application/json
+
+{
+    "nomeSolicitante": "Rafael",
+    "nomeSistema": "pagamento",
+    "data": "2024-07-22",
+    "descricaoRequisicao": "Ocorreu um problema serio no sistema do pagamento",
+    "statusRequisicao" : 1,
+    "anexo": "",
+    "dataFechamento": ""
+}
+
+###
+
+// Mostrar as requisicoes
+GET http://localhost:8080/request/list
+
+###
+
+// Testar rota de login
+POST http://localhost:8080/user/validarLogin/david/1234567
