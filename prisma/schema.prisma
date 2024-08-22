@@ -25,13 +25,96 @@ model ChangeRequest {
   id                  String    @id @default(uuid()) @db.Char(36)
   nomeSolicitante     String    @db.VarChar(50)
   nomeSistema         String    @db.VarChar(50)
-  data                DateTime  @default(now())
+  dataCriacao         DateTime  @default(now())
   descricaoRequisicao String    @db.VarChar(500)
   statusRequisicao    Int?      @db.Int()
   anexo               Bytes?    @db.Blob()
   dataFechamento      DateTime? @db.Date()
 
+  changeAnalysis ChangeRequestAnalysis?
+
   @@map("requisicoes")
+}
+
+model ChangeRequestAnalysis {
+  id         String  @id @default(uuid()) @db.Char(36)
+  aprovacao  Boolean @db.Bit(1)
+  observacao String  @db.VarChar(500)
+  escopo     String  @db.VarChar(500)
+
+  idRequest     String        @unique
+  changeRequest ChangeRequest @relation(fields: [idRequest], references: [id])
+
+  changeProject ChangeRequestProject?
+
+  @@map("requisicoes_analise")
+}
+
+model ChangeRequestProject {
+  id        String @id @default(uuid()) @db.Char(36)
+  descricao String @db.VarChar(5000)
+  anexo     Bytes? @db.Blob()
+
+  idAnalysis       String                @unique
+  changeImplements ChangeRequestAnalysis @relation(fields: [idAnalysis], references: [id])
+
+  changeImplement ChangeRequestImplement?
+
+  @@map("requisicoes_projeto")
+}
+
+model ChangeRequestImplement {
+  id        String @id @default(uuid()) @db.Char(36)
+  descricao String @db.VarChar(5000)
+  anexo     Bytes? @db.Blob()
+
+  idProject     String               @unique
+  changeProject ChangeRequestProject @relation(fields: [idProject], references: [id])
+
+  changeTestes ChangeRequestTestSist?
+
+  @@map("requisicoes_implementacao")
+}
+
+model ChangeRequestTestSist {
+  id String @id @default(uuid()) @db.Char(36)
+
+  aprovado  Boolean  @db.Bit(1)
+  descricao String   @db.VarChar(500)
+  data      DateTime @default(now())
+
+  idImplement  String                 @unique
+  changeTestes ChangeRequestImplement @relation(fields: [idImplement], references: [id])
+
+  changeAccept ChangeRequestTestAcc?
+
+  @@map("requisicoes_teste_sistema")
+}
+
+model ChangeRequestTestAcc {
+  id String @id @default(uuid()) @db.Char(36)
+
+  aprovado  Boolean  @db.Bit(1)
+  descricao String   @db.VarChar(500)
+  data      DateTime @default(now())
+
+  idTestSis    String                @unique
+  changeTestes ChangeRequestTestSist @relation(fields: [idTestSis], references: [id])
+
+  changeDelivery ChangeRequestDelivery?
+
+  @@map("requisicoes_teste_aceite")
+}
+
+model ChangeRequestDelivery {
+  id        String @id @default(uuid()) @db.Char(36)
+  descricao String @db.VarChar(5000)
+  anexo     Bytes? @db.Blob()
+
+  idTesteAcc   String               @unique
+  changeAccept ChangeRequestTestAcc @relation(fields: [idTesteAcc], references: [id])
+
+  @@map("requisicoes_entrega")
 }
 
 datasource db {
